@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="styles.css">
+</helmet>
+
+<div style="position:fixed;top:16px;right:16px;z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+  <span style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 55%, transparent)">Pratinjau</span>
+  <div style="display:flex;gap:6px;background:var(--color-surface);padding:6px;border-radius:var(--radius-lg);box-shadow:var(--shadow-md)">
+    <button class="{{ publicBtnClass }}" onClick="{{ goPublic }}" style="font-size:12px;padding:6px 12px">Halaman Publik</button>
+    <button class="{{ adminBtnClass }}" onClick="{{ goAdminToggle }}" style="font-size:12px;padding:6px 12px">Admin Panel</button>
+  </div>
+</div>
+
+<sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:720px;margin:0 auto;padding:0 24px 80px">
+    <nav class="nav" style="padding-left:0;padding-right:0">
+      <span class="nav-brand">{{ companyName }}</span>
+    </nav>
+    <div style="border-top:4px solid var(--color-text);margin-top:8px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 60%, transparent)">
+      <span>Formulir Minat Produk</span>
+      <span>26 Juli 2026</span>
+    </div>
+    <div style="border-top:1px solid var(--color-text);margin-bottom:40px"></div>
+
+    <h1 style="max-width:520px">Tertarik dengan Produk Kami? Mari Terhubung.</h1>
+    <p class="text-muted" style="max-width:480px;font-size:16px">Lengkapi data singkat di bawah ini. Tim kami akan menghubungi Anda untuk informasi produk, jadwal demo, atau penawaran harga.</p>
+    <div style="display:flex;gap:8px;margin:20px 0 48px;flex-wrap:wrap">
+      <span class="tag tag-outline">Respon dalam 1x24 jam</span>
+      <span class="tag tag-outline">Data aman &amp; rahasia</span>
+    </div>
+
+    <form onSubmit="{{ handleSubmit }}" style="max-width:480px;display:flex;flex-direction:column;gap:20px">
+      <div class="field">
+        <label>Nama Lengkap*</label>
+        <input class="input" type="text" placeholder="Nama sesuai KTP" value="{{ nameValue }}" onChange="{{ onNameChange }}">
+        <sc-if value="{{ nameError }}"><div style="color:var(--color-accent-2-700);font-size:12px;margin-top:4px">Nama wajib diisi</div></sc-if>
+      </div>
+      <div class="field">
+        <label>Email Aktif*</label>
+        <input class="input" type="email" placeholder="nama@perusahaan.com" value="{{ emailValue }}" onChange="{{ onEmailChange }}">
+        <sc-if value="{{ emailError }}"><div style="color:var(--color-accent-2-700);font-size:12px;margin-top:4px">Email wajib diisi</div></sc-if>
+      </div>
+      <div class="field">
+        <label>No. HP / WhatsApp*</label>
+        <input class="input" type="tel" placeholder="08xx-xxxx-xxxx" value="{{ phoneValue }}" onChange="{{ onPhoneChange }}">
+        <sc-if value="{{ phoneError }}"><div style="color:var(--color-accent-2-700);font-size:12px;margin-top:4px">No. HP wajib diisi</div></sc-if>
+      </div>
+      <div class="field">
+        <label>Nama Perusahaan (opsional)</label>
+        <input class="input" type="text" placeholder="PT / CV / Perorangan" value="{{ companyValue }}" onChange="{{ onCompanyChange }}">
+      </div>
+      <div class="field">
+        <label>Anda tertarik dengan apa?</label>
+        <select class="input" value="{{ interestValue }}" onChange="{{ onInterestChange }}">
+          <option value="Informasi umum">Informasi umum</option>
+          <option value="Demo produk">Demo produk</option>
+          <option value="Penawaran harga">Penawaran harga</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <sc-if value="{{ showNoteField }}" hint-placeholder-val="{{ true }}">
+        <div class="field">
+          <label>Catatan Tambahan (opsional)</label>
+          <textarea class="input" placeholder="Ceritakan kebutuhan Anda secara singkat" value="{{ noteValue }}" onChange="{{ onNoteChange }}"></textarea>
+        </div>
+      </sc-if>
+      <sc-if value="{{ requireConsent }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <label style="display:flex;align-items:flex-start;gap:10px;font-size:13px;cursor:pointer">
+            <input type="checkbox" checked="{{ consentValue }}" onChange="{{ onConsentChange }}" style="accent-color:var(--color-accent);width:18px;height:18px;margin-top:1px;flex:none">
+            <span>Saya setuju data ini digunakan oleh tim untuk menghubungi saya terkait produk/layanan yang diminati.</span>
+          </label>
+          <sc-if value="{{ consentError }}"><div style="color:var(--color-accent-2-700);font-size:12px;margin-top:6px">Persetujuan wajib dicentang</div></sc-if>
+        </div>
+      </sc-if>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:4px">Kirim Data</button>
+    </form>
+
+    <p style="margin-top:48px;font-size:12px" class="text-muted">© 2026 {{ companyName }}. Data Anda diproses sesuai <a href="#">Kebijakan Privasi</a> kami.</p>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isThanks }}" hint-placeholder-val="{{ false }}">
+  <div style="max-width:720px;margin:0 auto;padding:64px 24px;display:flex;flex-direction:column;align-items:flex-start;gap:16px;min-height:70vh;justify-content:center">
+    <div style="width:56px;height:56px;border-radius:50%;background:var(--color-accent-100);display:flex;align-items:center;justify-content:center">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" style="stroke:var(--color-accent-700)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <h2>Terima kasih, {{ lastSubmittedName }}!</h2>
+    <p class="text-muted" style="max-width:440px;font-size:16px">Data Anda sudah kami terima. Tim kami akan segera menghubungi Anda melalui email atau WhatsApp yang telah didaftarkan.</p>
+    <button class="btn btn-secondary" onClick="{{ resetToForm }}" style="margin-top:12px">Isi Formulir Lain</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isAdminLogin }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px">
+    <form onSubmit="{{ handleLogin }}" class="card elev-md" style="width:100%;max-width:380px;padding:32px;gap:20px">
+      <div>
+        <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:6px">Admin Panel</div>
+        <h3 style="margin:0">Masuk ke Dashboard</h3>
+      </div>
+      <div class="field">
+        <label>Username</label>
+        <input class="input" type="text" placeholder="admin" value="{{ loginUserValue }}" onChange="{{ onLoginUserChange }}">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input class="input" type="password" placeholder="••••••••" value="{{ loginPassValue }}" onChange="{{ onLoginPassChange }}">
+      </div>
+      <sc-if value="{{ loginError }}"><div style="color:var(--color-accent-2-700);font-size:13px">Username dan password wajib diisi</div></sc-if>
+      <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+      <button type="button" class="btn btn-ghost" onClick="{{ goPublic }}" style="align-self:flex-start;padding-left:0">← Kembali ke microsite</button>
+    </form>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isAdminDashboard }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <nav class="nav">
+      <span class="nav-brand">Admin Panel · {{ companyName }}</span>
+      <button class="btn btn-secondary" onClick="{{ handleLogout }}" style="margin-left:auto">Keluar</button>
+    </nav>
+    <div style="max-width:1040px;margin:0 auto;padding:24px 24px 80px">
+      <h2>Data Registrant</h2>
+      <p class="text-muted" style="max-width:560px">Kelola dan unduh data calon customer yang masuk dari microsite.</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;margin:32px 0 24px">
+        <div>
+          <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 60%, transparent)">Total Registrant</div>
+          <div style="font-family:var(--font-heading);font-weight:600;font-size:48px;color:var(--color-accent-700)">{{ totalCount }}</div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <div style="position:relative">
+            <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" style="stroke:var(--color-neutral-600)" stroke-width="2"></circle><path d="M21 21l-4.3-4.3" style="stroke:var(--color-neutral-600)" stroke-width="2" stroke-linecap="round"></path></svg>
+            <input class="input" type="text" placeholder="Cari nama, email, perusahaan..." value="{{ searchValue }}" onChange="{{ onSearchChange }}" style="padding-left:34px;width:260px">
+          </div>
+          <button class="btn btn-primary" onClick="{{ downloadCSV }}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            Unduh CSV
+          </button>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="table">
+          <thead><tr><th>Nama</th><th>Email</th><th>No. HP</th><th>Perusahaan</th><th>Minat</th><th>Tanggal</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ filteredRegistrants }}" as="r" hint-placeholder-count="6">
+              <tr>
+                <td>{{ r.name }}</td>
+                <td>{{ r.email }}</td>
+                <td>{{ r.phone }}</td>
+                <td>{{ r.company }}</td>
+                <td><span class="tag tag-accent">{{ r.interest }}</span></td>
+                <td class="text-muted">{{ r.date }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <sc-if value="{{ noResults }}"><div style="padding:32px 0;text-align:center" class="text-muted">Tidak ada data yang cocok dengan pencarian.</div></sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:900,&quot;height&quot;:1000},&quot;companyName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;X-Jan&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Konten&quot;},&quot;requireConsent&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Perilaku&quot;},&quot;showNoteField&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Perilaku&quot;}}">
+class Component extends DCLogic {
+  state = {
+    view: 'landing',
+    loggedIn: false,
+    form: { name: '', email: '', phone: '', company: '', interest: 'Informasi umum', note: '', consent: false },
+    submitAttempted: false,
+    lastSubmittedName: '',
+    search: '',
+    loginUser: '', loginPass: '', loginAttempted: false,
+    registrants: [
+      { id: 1, name: 'Andi Prasetyo', email: 'andi.prasetyo@mailcorp.co.id', phone: '0812-3456-7890', company: 'PT Sumber Makmur', interest: 'Penawaran harga', date: '21 Jul 2026' },
+      { id: 2, name: 'Siti Rahmawati', email: 'siti.rahma@usahamandiri.id', phone: '0813-2211-0098', company: 'CV Usaha Mandiri', interest: 'Demo produk', date: '22 Jul 2026' },
+      { id: 3, name: 'Budi Santoso', email: 'budi.santoso@gmail.com', phone: '0857-1234-5566', company: '—', interest: 'Informasi umum', date: '23 Jul 2026' },
+      { id: 4, name: 'Dewi Anggraini', email: 'dewi.a@karyabersama.com', phone: '0821-9988-7766', company: 'PT Karya Bersama', interest: 'Demo produk', date: '23 Jul 2026' },
+      { id: 5, name: 'Rendra Wijaya', email: 'rendra.w@majujaya.co.id', phone: '0878-4433-2211', company: 'PT Maju Jaya Abadi', interest: 'Penawaran harga', date: '24 Jul 2026' },
+      { id: 6, name: 'Nur Aini', email: 'nur.aini@outlook.com', phone: '0895-6677-8899', company: 'Toko Aini', interest: 'Informasi umum', date: '25 Jul 2026' }
+    ]
+  };
+
+  setField(key, value) { this.setState(s => ({ form: { ...s.form, [key]: value } })); }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    const f = this.state.form;
+    const requireConsent = this.props.requireConsent ?? true;
+    const valid = f.name.trim() && f.email.trim() && f.phone.trim() && (!requireConsent || f.consent);
+    if (!valid) { this.setState({ submitAttempted: true }); return; }
+    const entry = {
+      id: Date.now(), name: f.name.trim(), email: f.email.trim(), phone: f.phone.trim(),
+      company: f.company.trim() || '—', interest: f.interest, date: '26 Jul 2026'
+    };
+    this.setState(s => ({
+      registrants: [entry, ...s.registrants],
+      lastSubmittedName: entry.name,
+      view: 'thanks',
+      submitAttempted: false,
+      form: { name: '', email: '', phone: '', company: '', interest: 'Informasi umum', note: '', consent: false }
+    }));
+  }
+
+  handleLogin(e) {
+    e.preventDefault();
+    const { loginUser, loginPass } = this.state;
+    if (loginUser.trim() && loginPass.trim()) { this.setState({ loggedIn: true, view: 'adminDashboard' }); }
+    else { this.setState({ loginAttempted: true }); }
+  }
+
+  handleLogout() { this.setState({ loggedIn: false, view: 'adminLogin', loginUser: '', loginPass: '', loginAttempted: false }); }
+  goPublic() { this.setState({ view: 'landing' }); }
+  goAdminToggle() { this.setState(s => ({ view: s.loggedIn ? 'adminDashboard' : 'adminLogin' })); }
+  resetToForm() { this.setState({ view: 'landing' }); }
+
+  downloadCSV() {
+    const rows = [['Nama', 'Email', 'No. HP', 'Perusahaan', 'Minat', 'Tanggal Daftar'],
+      ...this.state.registrants.map(r => [r.name, r.email, r.phone, r.company, r.interest, r.date])];
+    const csv = rows.map(row => row.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'data-registrant.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const q = s.search.trim().toLowerCase();
+    const filteredRegistrants = s.registrants.filter(r => !q || r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q) || r.company.toLowerCase().includes(q));
+    const requireConsent = this.props.requireConsent ?? true;
+    const previewIsPublic = s.view === 'landing' || s.view === 'thanks';
+    return {
+      companyName: this.props.companyName ?? 'Nama Perusahaan',
+      requireConsent,
+      showNoteField: this.props.showNoteField ?? true,
+      isLanding: s.view === 'landing',
+      isThanks: s.view === 'thanks',
+      isAdminLogin: s.view === 'adminLogin',
+      isAdminDashboard: s.view === 'adminDashboard',
+      publicBtnClass: 'btn ' + (previewIsPublic ? 'btn-primary' : 'btn-ghost'),
+      adminBtnClass: 'btn ' + (!previewIsPublic ? 'btn-primary' : 'btn-ghost'),
+      goPublic: () => this.goPublic(),
+      goAdminToggle: () => this.goAdminToggle(),
+      nameValue: s.form.name, onNameChange: e => this.setField('name', e.target.value),
+      emailValue: s.form.email, onEmailChange: e => this.setField('email', e.target.value),
+      phoneValue: s.form.phone, onPhoneChange: e => this.setField('phone', e.target.value),
+      companyValue: s.form.company, onCompanyChange: e => this.setField('company', e.target.value),
+      interestValue: s.form.interest, onInterestChange: e => this.setField('interest', e.target.value),
+      noteValue: s.form.note, onNoteChange: e => this.setField('note', e.target.value),
+      consentValue: s.form.consent, onConsentChange: e => this.setField('consent', e.target.checked),
+      nameError: s.submitAttempted && !s.form.name.trim(),
+      emailError: s.submitAttempted && !s.form.email.trim(),
+      phoneError: s.submitAttempted && !s.form.phone.trim(),
+      consentError: s.submitAttempted && requireConsent && !s.form.consent,
+      handleSubmit: e => this.handleSubmit(e),
+      lastSubmittedName: s.lastSubmittedName,
+      resetToForm: () => this.resetToForm(),
+      loginUserValue: s.loginUser, onLoginUserChange: e => this.setState({ loginUser: e.target.value }),
+      loginPassValue: s.loginPass, onLoginPassChange: e => this.setState({ loginPass: e.target.value }),
+      loginError: s.loginAttempted && !(s.loginUser.trim() && s.loginPass.trim()),
+      handleLogin: e => this.handleLogin(e),
+      handleLogout: () => this.handleLogout(),
+      totalCount: s.registrants.length,
+      searchValue: s.search, onSearchChange: e => this.setState({ search: e.target.value }),
+      filteredRegistrants,
+      noResults: filteredRegistrants.length === 0 && q !== '',
+      downloadCSV: () => this.downloadCSV()
+    };
+  }
+}
+</script>
+</body>
+</html>
